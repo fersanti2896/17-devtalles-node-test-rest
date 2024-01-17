@@ -9,7 +9,8 @@ interface Options  {
 }
 
 export class Server {
-    private app = express();
+    public readonly app = express();
+    private serverListen?: any;
     private readonly port: number;
     private readonly publicPath: string;
     private readonly routes: Router;
@@ -37,10 +38,14 @@ export class Server {
         this.app.get('*', (req: any, res: any) => {
             const indexPath = path.join( __dirname + `../../../${ this.publicPath }/index.html` );
             res.sendFile(indexPath);
-        })
+        });
 
-        this.app.listen(this.port, () => {
+        this.serverListen = this.app.listen(this.port, () => {
             console.log(`Server running in port: ${ this.port }!`)
-        })
+        });
+    }
+
+    public close(){
+        this.serverListen?.close();
     }
 }
